@@ -1,0 +1,8 @@
+dt.request { margin:0; padding: 0.5em; }
+dd.request { margin:0; padding: 0 1em 1em 2em; }
+.alt { background-color: #eee; }
+
+.inactive { background: rgba(230, 39, 28, 0.5); }
+.inactivealt { background: rgba(230, 39, 28, 0.75); }
+
+

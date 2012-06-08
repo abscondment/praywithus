@@ -32,7 +32,28 @@ function praywithus_create_request($title, $description) {
 function praywithus_get_requests() {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
-  $requests = $wpdb->get_results( "SELECT id, title, description, created_at FROM $request_table" );
+  $requests = $wpdb->get_results( "SELECT *
+                                   FROM $request_table
+                                   ORDER BY active DESC, id ASC" );
   return $requests;
 }
+
+function praywithus_actvitate_request($requestId) {
+  praywithus_request_set_active_state($requestId, 1);
+}
+
+function praywithus_deactvitate_request($requestId) {
+  praywithus_request_set_active_state($requestId, 0);
+}
+function praywithus_request_set_active_state($requestId, $activeState) {
+  global $wpdb;
+  $request_table = $wpdb->prefix . "praywithus_requests";
+  $wpdb->update($request_table,
+                array( 'active' => $activeState ),
+                array('id' => $requestId ),
+                array('%d'),
+                array('%d'));
+}
+
+
 ?>

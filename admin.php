@@ -21,11 +21,34 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+
+define('PRAYWITHUS_VERSION', '0.0.1');
+define('PRAYWITHUS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
+
 require_once dirname( __FILE__ ) . '/db.php';
 add_action( 'admin_menu', 'praywithus_menu' );
+add_action( 'admin_enqueue_scripts', 'praywithus_load_js_and_css' );
 
 function praywithus_menu() {
 	add_options_page( 'Prayer Options', 'Pray With Us', 'manage_options', 'praywithus', 'praywithus_options' );
+}
+
+function praywithus_load_js_and_css() {
+	// global $hook_suffix;
+
+	// if (
+	// 	$hook_suffix == 'index.php'	# dashboard
+	// ) {
+		wp_register_style( 'praywithus.css', PRAYWITHUS_PLUGIN_URL . 'praywithus.css', array(), PRAYWITHUS_PLUGIN_URL );
+		wp_enqueue_style( 'praywithus.css');
+
+        // TODO
+		// wp_register_script( 'praywithus.js', PRAYWITHUS_PLUGIN_URL . 'praywithus.js', array('jquery'), '2.5.4.6' );
+		// wp_enqueue_script( 'praywithus.js' );
+		// wp_localize_script( 'praywithus.js', 'WPPraywithus', array(
+		// 	'comment_author_url_nonce' => wp_create_nonce( 'comment_author_url_nonce' )
+		// ) );
+	// }
 }
 
 function praywithus_options() {
@@ -36,6 +59,14 @@ function praywithus_options() {
   // insert new post
   if ( isset($_POST['title']) && isset($_POST['description']) ) {
     praywithus_create_request($_POST['title'], $_POST['description']);
+  }
+
+  if ( isset($_POST['toggleRequest']) && isset($_POST['toggleTo']) ) {
+    if ( $_POST['toggleTo'] == 'activate' ) {
+      praywithus_actvitate_request(intval($_POST['toggleRequest']));
+    } else {
+      praywithus_deactvitate_request(intval($_POST['toggleRequest']));
+    }
   }
 
   // load current posts
@@ -63,12 +94,49 @@ function praywithus_options() {
   <h3>Current requests</h3>
   <dl>
 <?php
+   $i = 0;
    foreach ( $requests as $r ) {
-    echo "<dt>" . $r->title. "</dt>";
-    echo '<dd>';
-    echo '  <div><em>' . $r->description . '</em></div>';
-    echo '  <div><b>N praying</b> &ndash; Activate | Deactivate | Delete</div>';
-    echo '</dd>';
+     $active = intval($r->active) == 1;
+     $alt = $i % 2 == 1;
+
+     $cssClasses = 'request';
+
+     if ( $alt ) {
+       $cssClasses .= ' alt';
+     }
+     if ( !$active ) {
+       if ( $alt ) {
+         $cssClasses .= ' inactivealt';
+       } else {
+         $cssClasses .= ' inactive';
+       }
+     }
+
+
+     echo "<dt class='$cssClasses'><b>" . $r->title. "</b> (" . ($active ? 'Active' : 'Inactive') . ")</dt>";
+     echo "<dd class='$cssClasses'>";
+     echo '  <div><em>' . $r->description . '</em></div>';
+
+     echo '  <div>';
+     echo "<form action='' method='POST'><input type='hidden' name='toggleRequest' value='$r->id' />";
+     echo '<b>N praying</b> &ndash; ';
+     // toggle activation status
+
+     if ( $active ) {
+       // active
+       echo "<input type='hidden' name='toggleTo' value='deactivate' />";
+       echo "<input type='submit' value='Dectivate' />";
+
+     } else {
+       // inactive
+       echo "<input type='hidden' name='toggleTo' value='activate' />";
+       echo "<input type='submit' value='Activate' />";
+      
+     }
+     echo ' | Delete</div>';
+     echo '</form>';
+     echo '</dd>';
+     $i++;
   }
 ?>
   </dl>
