@@ -27,6 +27,8 @@
 
 require_once dirname( __FILE__ ) . '/db.php';
 
+$praywithus_session = NULL;
+
 class PrayWithUs_Widget extends WP_Widget {
   function __construct() {
     parent::__construct(
@@ -36,6 +38,7 @@ class PrayWithUs_Widget extends WP_Widget {
                         );
 
     if ( is_active_widget( false, false, $this->id_base ) ) {
+      add_action( 'wp', array( $this, 'cookies' ) );
       add_action( 'wp_head', array( $this, 'css' ) );
     }
   }
@@ -52,9 +55,21 @@ class PrayWithUs_Widget extends WP_Widget {
 <?php
 
   }
+
+  function cookies() {
+    global $praywithus_session;
+    if ( isset($_COOKIE["wp_praywithus_session"]) ) {
+      $praywithus_session = $_COOKIE["wp_praywithus_session"];
+    }
+    if ( empty($praywithus_session) ) {
+      $praywithus_session = uniqid($_SERVER['REMOTE_ADDR'] . '_', true);
+    }
+    setcookie("wp_praywithus_session", $praywithus_session, time() + 631138519);  /* expire in 20 years */
+  }
   
   function widget( $args, $instance ) {
-
+    global $praywithus_session;
+    
     // load active requests
     $requests = praywithus_get_active_requests();
 ?>
@@ -70,10 +85,14 @@ class PrayWithUs_Widget extends WP_Widget {
      if ( $alt ) {
        $cssClasses .= ' alt';
      }
-     echo "<dt class='$cssClasses'><b>" . $r->title. "</b></dt>";
+     echo "<dt class='$cssClasses'>";
+     echo "<b>" . $r->title. "</b>";
+     echo "</dt>";
      echo "<dd class='$cssClasses'>";
      echo $r->description;
-     echo "<br/><b>$r->count praying</b> &ndash; Pray!</div>";
+     echo '<br/>';
+     echo " <b>$r->count praying</b> &ndash; ";
+     echo "<a href='#' onclick=\"alert('pray for $r->id by $praywithus_session'); return false;\">Pray</a>";
      echo '</dd>';
      $i++;
   }
