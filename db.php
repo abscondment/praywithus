@@ -29,12 +29,34 @@ function praywithus_create_request($title, $description) {
   return $rows_affected;
 }
 
+function praywithus_get_active_requests() {
+  global $wpdb;
+  $request_table = $wpdb->prefix . "praywithus_requests";
+  $prayers_table = $wpdb->prefix . "praywithus_prayers";
+  $requests = $wpdb->get_results( "SELECT r.*, ifnull(p.count, 0) as count
+                                   FROM $request_table r
+                                     LEFT OUTER JOIN
+                                     (SELECT request_id, count(*) as count
+                                      FROM $prayers_table
+                                      GROUP BY request_id) p
+                                     ON r.id = p.request_id
+                                   WHERE r.active = 1
+                                   ORDER BY r.active DESC, r.id ASC" );
+  return $requests;
+}
+
 function praywithus_get_requests() {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
-  $requests = $wpdb->get_results( "SELECT *
-                                   FROM $request_table
-                                   ORDER BY active DESC, id ASC" );
+  $prayers_table = $wpdb->prefix . "praywithus_prayers";
+  $requests = $wpdb->get_results( "SELECT r.*, ifnull(p.count, 0) as count
+                                   FROM $request_table r
+                                     LEFT OUTER JOIN
+                                     (SELECT request_id, count(*) as count
+                                      FROM $prayers_table
+                                      GROUP BY request_id) p
+                                     ON r.id = p.request_id
+                                   ORDER BY r.active DESC, r.id ASC" );
   return $requests;
 }
 

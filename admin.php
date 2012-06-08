@@ -119,7 +119,7 @@ function praywithus_options() {
 
      echo '  <div>';
      echo "<form action='' method='POST'><input type='hidden' name='toggleRequest' value='$r->id' />";
-     echo '<b>N praying</b> &ndash; ';
+     echo "<b>$r->count praying</b> &ndash; ";
      // toggle activation status
 
      if ( $active ) {
