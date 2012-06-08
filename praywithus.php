@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Pray With Us
-Plugin URI: http://TODO
+Plugin URI: https://github.com/abscondment/praywithus
 Description: List prayer requests with counts of people praying.
 Version: 0.0.1
 Author: Brendan Ribera

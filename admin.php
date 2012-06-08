@@ -20,31 +20,57 @@
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+require_once dirname( __FILE__ ) . '/db.php';
 add_action( 'admin_menu', 'praywithus_menu' );
 
 function praywithus_menu() {
-	add_options_page( 'Prayer Options', 'Pray With Us', 'manage_options', 'my-unique-identifier', 'my_plugin_options' );
+	add_options_page( 'Prayer Options', 'Pray With Us', 'manage_options', 'praywithus', 'praywithus_options' );
 }
 
-function my_plugin_options() {
-	if ( !current_user_can( 'manage_options' ) )  {
-		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
-	}
+function praywithus_options() {
+  if ( !current_user_can( 'manage_options' ) )  {
+    wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+  }
+
+  // insert new post
+  if ( isset($_POST['title']) && isset($_POST['description']) ) {
+    praywithus_create_request($_POST['title'], $_POST['description']);
+  }
+
+  // load current posts
+  $requests = praywithus_get_requests();
 ?>    
 <div class="wrap">
-  <h1>Configure Your Prayer Requests</h1>
-  <dl>
-    <dt>The Gift of Prayer</dt>
-    <dd>
-      <div><em>Donate 3 minutes or more of prayer one time.</em></div>
-      <div><b>5 praying</b> &ndash; Activate | Deactivate | Delete</div>
-    </dd>
+  <h2>Manage Prayer Requests</h2>
 
-    <dt>The Gift of Prayer</dt>
-    <dd>
-      <div><em>Donate 3 minutes or more of prayer one time.</em></div>
-      <div><b>5 praying</b> &ndash; Activate | Deactivate | Delete</div>
-    </dd>
+  <div id="addForm" style="display:none;">>
+  <a href="#" onclick="return false;"><h3>Add a request</h3></a>
+  </div>
+    <h3>Add a request</h3>
+    <form action="" method="POST">
+      <dl>
+        <dt><label for="request_title">Title: </label></dt>
+        <dd><input id="request_title" name="title" style="min-width:150px;" /></dd>
+        <dt><label for="request_description">Description: </label></dt>
+        <dd><textarea id="request_description" name="description" style="min-height:100px;min-width:300px;"></textarea></dd>
+      <dt></dt>
+      <dd><input type="submit" value="Add Request" /></dd>
+      </dl>
+    </form>
+    <hr />
+
+  <h3>Current requests</h3>
+  <dl>
+<?php
+   foreach ( $requests as $r ) {
+    echo "<dt>" . $r->title. "</dt>";
+    echo '<dd>';
+    echo '  <div><em>' . $r->description . '</em></div>';
+    echo '  <div><b>N praying</b> &ndash; Activate | Deactivate | Delete</div>';
+    echo '</dd>';
+  }
+?>
   </dl>
 </div>
 <?php

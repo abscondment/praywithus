@@ -21,41 +21,18 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-global $praywithus_db_version;
-$praywithus_db_version = "0.0.1";
 
-require_once dirname( __FILE__ ) . '/db.php';
-require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-
-function praywithus_install () {
-   global $wpdb;
-   global $praywithus_db_version;
-
-  $installed_ver = get_option( "praywithus_db_version" );
-  
-  if( $installed_ver != $praywithus_db_version ) {
-     $request_table = $wpdb->prefix . "praywithus_requests";
-     $sql = "CREATE TABLE $request_table (
-    id mediumint(11) NOT NULL AUTO_INCREMENT,
-    title varchar(255) NOT NULL,
-    description TEXT,
-    active TINYINT(1) UNSIGNED DEFAULT 1 NOT NULL,
-    created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-    UNIQUE KEY id (id)
-  );";
-     
-     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-     dbDelta($sql);
-
-     praywithus_install_data();
-  }
-
-  add_option("praywithus_db_version", $praywithus_db_version);
+function praywithus_create_request($title, $description) {
+  global $wpdb;
+  $request_table = $wpdb->prefix . "praywithus_requests";
+  $rows_affected = $wpdb->insert( $request_table, array( 'created_at' => current_time('mysql'), 'title' => $title, 'description' => $description ) );
+  return $rows_affected;
 }
 
-function praywithus_install_data() {
-  $welcome_title = "Example Prayer";
-  $welcome_text = "This is an example prayer request. It shows that you have installed the Pray With Us plugin successfully!";
-  praywithus_create_request($welcome_title, $welcome_text);
+function praywithus_get_requests() {
+  global $wpdb;
+  $request_table = $wpdb->prefix . "praywithus_requests";
+  $requests = $wpdb->get_results( "SELECT id, title, description, created_at FROM $request_table" );
+  return $requests;
 }
 ?>
