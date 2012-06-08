@@ -1,15 +1,4 @@
 <?php
-/*
-Plugin Name: Pray With Us
-Plugin URI: https://github.com/abscondment/praywithus
-Description: List prayer requests with counts of people praying.
-Version: 0.0.1
-Author: Brendan Ribera
-Author URI: http://threebrothers.org
-License: MIT
-*/
-?>
-<?php
 /*  Copyright 2012 Brendan Ribera (email : brendan.ribera@gmail.com)
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -31,13 +20,29 @@ License: MIT
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-include_once dirname( __FILE__ ) . '/widget.php';
 
-if ( is_admin() ) {
-  require_once dirname( __FILE__ ) . '/setup.php';
-  register_activation_hook(__FILE__,'praywithus_install');
+/**
+ * @package PrayWithUs
+ */
+class PrayWithUs_Widget extends WP_Widget {
+  function __construct() {
+    parent::__construct(
+                        'praywithus_widget',
+                        __( 'Pray With Us' ),
+                        array( 'description' => __( 'Display Prayer Requests and counts' ) )
+                        );
+  }
 
-  require_once dirname( __FILE__ ) . '/admin.php';
+  function widget( $args, $instance ) {
+
+    echo 'TEST';
+  }
 }
+
+function praywithus_register_widgets() {
+  register_widget( 'PrayWithUs_Widget' );
+}
+
+// add_action( 'widgets_init', 'praywithus_register_widgets' );
 
 ?>
