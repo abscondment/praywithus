@@ -22,7 +22,7 @@
 */
 
 
-define('PRAYWITHUS_VERSION', '0.0.1');
+define('PRAYWITHUS_VERSION', '0.0.2');
 define('PRAYWITHUS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 require_once dirname( __FILE__ ) . '/db.php';

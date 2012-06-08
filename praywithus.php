@@ -3,7 +3,7 @@
 Plugin Name: Pray With Us
 Plugin URI: https://github.com/abscondment/praywithus
 Description: List prayer requests with counts of people praying.
-Version: 0.0.1
+Version: 0.0.2
 Author: Brendan Ribera
 Author URI: http://threebrothers.org
 License: MIT

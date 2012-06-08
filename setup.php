@@ -22,7 +22,7 @@
 */
 
 global $praywithus_db_version;
-$praywithus_db_version = "0.0.1";
+$praywithus_db_version = "0.0.2";
 
 require_once dirname( __FILE__ ) . '/db.php';
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -35,13 +35,22 @@ function praywithus_install () {
   
   if( $installed_ver != $praywithus_db_version ) {
      $request_table = $wpdb->prefix . "praywithus_requests";
-     $sql = "CREATE TABLE $request_table (
+     $prayers_table = $wpdb->prefix . "praywithus_prayers";
+     $sql = "
+  CREATE TABLE $request_table (
     id mediumint(11) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
     description TEXT,
     active TINYINT(1) UNSIGNED DEFAULT 1 NOT NULL,
     created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-    UNIQUE KEY id (id)
+    PRIMARY KEY id (id)
+  );
+  CREATE TABLE $prayers_table (
+    id mediumint(11) NOT NULL AUTO_INCREMENT,  
+    session_id varchar(255) NOT NULL,
+    request_id mediumint(11) NOT NULL,
+    PRIMARY KEY id (id),
+    UNIQUE KEY prayer_id (request_id, session_id)
   );";
      
      require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -50,7 +59,11 @@ function praywithus_install () {
      praywithus_install_data();
   }
 
-  add_option("praywithus_db_version", $praywithus_db_version);
+  if ( empty($installed_ver) ) {
+    add_option("praywithus_db_version", $praywithus_db_version);
+  } else {
+    update_option( "praywithus_db_version", $praywithus_db_version );
+  }
 }
 
 function praywithus_install_data() {
