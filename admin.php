@@ -1,15 +1,4 @@
 <?php
-/*
-Plugin Name: Pray With Us
-Plugin URI: http://TODO
-Description: List prayer requests with counts of people praying.
-Version: 0.0.1
-Author: Brendan Ribera
-Author URI: http://threebrothers.org
-License: MIT
-*/
-?>
-<?php
 /*  Copyright 2012 Brendan Ribera (email : brendan.ribera@gmail.com)
 
     Permission is hereby granted, free of charge, to any person obtaining
@@ -31,11 +20,33 @@ License: MIT
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+add_action( 'admin_menu', 'praywithus_menu' );
 
-require_once dirname( __FILE__ ) . '/setup.php';
-register_activation_hook(__FILE__,'praywithus_install');
+function praywithus_menu() {
+	add_options_page( 'Prayer Options', 'Pray With Us', 'manage_options', 'my-unique-identifier', 'my_plugin_options' );
+}
 
-if ( is_admin() ) {
-	require_once dirname( __FILE__ ) . '/admin.php';
+function my_plugin_options() {
+	if ( !current_user_can( 'manage_options' ) )  {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+?>    
+<div class="wrap">
+  <h1>Configure Your Prayer Requests</h1>
+  <dl>
+    <dt>The Gift of Prayer</dt>
+    <dd>
+      <div><em>Donate 3 minutes or more of prayer one time.</em></div>
+      <div><b>5 praying</b> &ndash; Activate | Deactivate | Delete</div>
+    </dd>
+
+    <dt>The Gift of Prayer</dt>
+    <dd>
+      <div><em>Donate 3 minutes or more of prayer one time.</em></div>
+      <div><b>5 praying</b> &ndash; Activate | Deactivate | Delete</div>
+    </dd>
+  </dl>
+</div>
+<?php
 }
 ?>
