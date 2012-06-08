@@ -24,6 +24,9 @@
 /**
  * @package PrayWithUs
  */
+
+require_once dirname( __FILE__ ) . '/db.php';
+
 class PrayWithUs_Widget extends WP_Widget {
   function __construct() {
     parent::__construct(
@@ -31,11 +34,53 @@ class PrayWithUs_Widget extends WP_Widget {
                         __( 'Pray With Us' ),
                         array( 'description' => __( 'Display Prayer Requests and counts' ) )
                         );
-  }
 
+    if ( is_active_widget( false, false, $this->id_base ) ) {
+      add_action( 'wp_head', array( $this, 'css' ) );
+    }
+  }
+  function css() {
+?>
+<style type="text/css">
+.ul-addw2p {margin:0; padding:0;}
+.praywithus dl, .praywithus dl dt,  .praywithus dl dd {
+    margin:0;
+    padding:0;
+}
+    .praywithus dl dd { margin-bottom:1em; }
+</style>
+<?php
+
+  }
+  
   function widget( $args, $instance ) {
 
-    echo 'TEST';
+    // load active requests
+    $requests = praywithus_get_active_requests();
+?>
+<div class="wrap praywithus">
+  <dl>
+<?php
+   $i = 0;
+   foreach ( $requests as $r ) {
+     $alt = $i % 2 == 1;
+
+     $cssClasses = 'request';
+
+     if ( $alt ) {
+       $cssClasses .= ' alt';
+     }
+     echo "<dt class='$cssClasses'><b>" . $r->title. "</b></dt>";
+     echo "<dd class='$cssClasses'>";
+     echo $r->description;
+     echo "<br/><b>$r->count praying</b> &ndash; Pray!</div>";
+     echo '</dd>';
+     $i++;
+  }
+?>
+  </dl>
+</div>
+<?php
   }
 }
 
@@ -43,6 +88,6 @@ function praywithus_register_widgets() {
   register_widget( 'PrayWithUs_Widget' );
 }
 
-// add_action( 'widgets_init', 'praywithus_register_widgets' );
+add_action( 'widgets_init', 'praywithus_register_widgets' );
 
 ?>
