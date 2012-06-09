@@ -59,17 +59,23 @@ function praywithus_get_request($requestID) {
   return $request;
 }
 
-function praywithus_get_active_requests() {
+function praywithus_get_active_requests($sessionID) {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
   $prayers_table = $wpdb->prefix . "praywithus_prayers";
-  $requests = $wpdb->get_results( "SELECT r.*, ifnull(p.count, 0) as count
+  $requests = $wpdb->get_results( "SELECT r.*, ifnull(p.count, 0) as count, ifnull(s.count, 0) as praying
                                    FROM $request_table r
                                      LEFT OUTER JOIN
                                      (SELECT request_id, count(*) as count
                                       FROM $prayers_table
                                       GROUP BY request_id) p
                                      ON r.id = p.request_id
+                                     LEFT OUTER JOIN
+                                     (SELECT request_id, count(*) as count
+                                      FROM $prayers_table
+                                      WHERE session_id = '$sessionID'
+                                      GROUP BY request_id) s
+                                     ON r.id = s.request_id
                                    WHERE r.active = 1
                                    ORDER BY r.active DESC, r.id ASC" );
   return $requests;
@@ -105,6 +111,19 @@ function praywithus_request_set_active_state($requestId, $activeState) {
                 array('id' => $requestId ),
                 array('%d'),
                 array('%d'));
+}
+
+function count_contents($count) {
+  $count = max(0, intval($count) - 1);
+  $other = 'other';
+  if ( $count != 1 ) {
+    $other .= 's';
+  }
+  if ( $count == 0 ) {
+    return "You are praying.";
+  } else {
+    return "You and $count $other are praying.";
+  }
 }
 
 

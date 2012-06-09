@@ -54,7 +54,8 @@ class PrayWithUs_Widget extends WP_Widget {
     margin:0;
     padding:0;
 }
-    .praywithus dl dd { margin-bottom:1em; }
+.praywithus dl dd { margin-bottom:1em; }
+.praying {font-weight:bold;}
 </style>
 <?php
 
@@ -75,7 +76,7 @@ class PrayWithUs_Widget extends WP_Widget {
     global $praywithus_session;
     
     // load active requests
-    $requests = praywithus_get_active_requests();
+    $requests = praywithus_get_active_requests($praywithus_session);
 ?>
 <div class="wrap praywithus">
   <dl>
@@ -83,7 +84,7 @@ class PrayWithUs_Widget extends WP_Widget {
    $i = 0;
    foreach ( $requests as $r ) {
      $alt = $i % 2 == 1;
-
+     $praying = intval($r->praying) == 1;
      $cssClasses = 'request';
 
      if ( $alt ) {
@@ -94,9 +95,15 @@ class PrayWithUs_Widget extends WP_Widget {
      echo "</dt>";
      echo "<dd class='$cssClasses'>";
      echo $r->description;
-     echo '<br/>';
-     echo " <b><span class='count'>$r->count</span> praying</b> <span class='hidePost'>&ndash;</span> ";
-     echo "<a href='#' class='hidePost praywithusButton' onclick='return false;' id='$r->id'>Pray</a>";
+     echo '<div class="praying">';
+     if ( $praying ) {
+       echo count_contents($r->count);
+     } else {
+       echo " $r->count praying";
+       echo " &ndash; ";
+       echo "<a href='#' class='praywithusButton' onclick='return false;' id='$r->id'>Pray</a>";
+     }
+     echo '</div>';
      echo '</dd>';
      $i++;
   }
@@ -121,7 +128,7 @@ class PrayWithUs_Widget extends WP_Widget {
     $prayerRequest = praywithus_get_request($requestID);
 
     // generate the response
-    $response = json_encode( array( 'success' => true, 'count' => $prayerRequest->count ) );
+    $response = json_encode( array( 'success' => true, 'contents' => count_contents($prayerRequest->count) ) );
 
     // response output
     header( "Content-Type: application/json" );
