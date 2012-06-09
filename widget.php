@@ -113,13 +113,15 @@ class PrayWithUs_Widget extends WP_Widget {
     }    
 
     // get the submitted parameters
-    $requestID = $_POST['requestID'];
+    $requestID = intval($_POST['requestID']);
 
     // insert it
     praywithus_add_prayer($requestID, $praywithus_session);
 
+    $prayerRequest = praywithus_get_request($requestID);
+
     // generate the response
-    $response = json_encode( array( 'success' => true, 'count' => 999 ) );
+    $response = json_encode( array( 'success' => true, 'count' => $prayerRequest->count ) );
 
     // response output
     header( "Content-Type: application/json" );

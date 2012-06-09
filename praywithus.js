@@ -6,8 +6,9 @@ jQuery(document).ready(function($) {
                {'action': 'pray',
                 'requestID': updateEl.attr('id') },
                function(d) {
-                 updateEl.parent().find('.hidePost').hide()
                  updateEl.parent().find('.count').text(d.count)
                })
+         .complete(function() { updateEl.parent().find('.hidePost').hide() })
+        
       })
   })

@@ -43,6 +43,21 @@ function praywithus_add_prayer($requestID, $sessionID) {
 }
 
 
+function praywithus_get_request($requestID) {
+  global $wpdb;
+  $request_table = $wpdb->prefix . "praywithus_requests";
+  $prayers_table = $wpdb->prefix . "praywithus_prayers";
+  $request = $wpdb->get_row( "SELECT r.*, ifnull(p.count, 0) as count
+                              FROM $request_table r
+                                LEFT OUTER JOIN
+                                  (SELECT request_id, count(*) as count
+                                   FROM $prayers_table
+                                   WHERE request_id = $requestID) p
+                                ON r.id = p.request_id
+                              WHERE r.id = $requestID
+                              LIMIT 1" );
+  return $request;
+}
 
 function praywithus_get_active_requests() {
   global $wpdb;
