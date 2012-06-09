@@ -21,10 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-
-define('PRAYWITHUS_VERSION', '0.0.2');
-define('PRAYWITHUS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
-
 require_once dirname( __FILE__ ) . '/db.php';
 add_action( 'admin_menu', 'praywithus_menu' );
 add_action( 'admin_enqueue_scripts', 'praywithus_load_js_and_css' );
@@ -34,21 +30,8 @@ function praywithus_menu() {
 }
 
 function praywithus_load_js_and_css() {
-	// global $hook_suffix;
-
-	// if (
-	// 	$hook_suffix == 'index.php'	# dashboard
-	// ) {
-		wp_register_style( 'praywithus.css', PRAYWITHUS_PLUGIN_URL . 'praywithus.css', array(), PRAYWITHUS_PLUGIN_URL );
-		wp_enqueue_style( 'praywithus.css');
-
-        // TODO
-		// wp_register_script( 'praywithus.js', PRAYWITHUS_PLUGIN_URL . 'praywithus.js', array('jquery'), '2.5.4.6' );
-		// wp_enqueue_script( 'praywithus.js' );
-		// wp_localize_script( 'praywithus.js', 'WPPraywithus', array(
-		// 	'comment_author_url_nonce' => wp_create_nonce( 'comment_author_url_nonce' )
-		// ) );
-	// }
+  wp_register_style( 'praywithus.css', PRAYWITHUS_PLUGIN_URL . 'praywithus.css', array(), PRAYWITHUS_VERSION );
+  wp_enqueue_style( 'praywithus.css');
 }
 
 function praywithus_options() {

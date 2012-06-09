@@ -25,9 +25,24 @@
 function praywithus_create_request($title, $description) {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
-  $rows_affected = $wpdb->insert( $request_table, array( 'created_at' => current_time('mysql'), 'title' => $title, 'description' => $description ) );
+  $rows_affected = $wpdb->insert($request_table,
+                                 array('created_at' => current_time('mysql'),
+                                       'title' => $title,
+                                       'description' => $description));
   return $rows_affected;
 }
+
+
+function praywithus_add_prayer($requestID, $sessionID) {
+  global $wpdb;
+  $prayers_table = $wpdb->prefix . "praywithus_prayers";
+  $rows_affected = $wpdb->insert($prayers_table,
+                                 array( 'request_id' => $requestID, 'session_id' => $sessionID ),
+                                 array( '%d', '%s' ));
+  return $rows_affected;
+}
+
+
 
 function praywithus_get_active_requests() {
   global $wpdb;

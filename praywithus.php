@@ -31,6 +31,10 @@ License: MIT
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+define('PRAYWITHUS_VERSION', '0.0.2');
+define('PRAYWITHUS_PLUGIN_URL', plugin_dir_url( __FILE__ ));
+
 include_once dirname( __FILE__ ) . '/widget.php';
 
 if ( is_admin() ) {

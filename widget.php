@@ -39,10 +39,14 @@ class PrayWithUs_Widget extends WP_Widget {
 
     if ( is_active_widget( false, false, $this->id_base ) ) {
       add_action( 'wp', array( $this, 'cookies' ) );
-      add_action( 'wp_head', array( $this, 'css' ) );
+      add_action( 'wp_head', array( $this, 'cssjs' ) );
+      add_action( 'wp_ajax_nopriv_pray', array ( $this, 'pray_submit' ) );
     }
   }
-  function css() {
+  function cssjs() {
+    wp_register_script( 'praywithus.js', PRAYWITHUS_PLUGIN_URL . 'praywithus.js', array('jquery'), PRAYWITHUS_VERSION );
+    wp_enqueue_script( 'praywithus.js' );
+    wp_localize_script( 'praywithus.js', 'PrayWithUs', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 ?>
 <style type="text/css">
 .ul-addw2p {margin:0; padding:0;}
@@ -91,8 +95,8 @@ class PrayWithUs_Widget extends WP_Widget {
      echo "<dd class='$cssClasses'>";
      echo $r->description;
      echo '<br/>';
-     echo " <b>$r->count praying</b> &ndash; ";
-     echo "<a href='#' onclick=\"alert('pray for $r->id by $praywithus_session'); return false;\">Pray</a>";
+     echo " <b><span class='count'>$r->count</span> praying</b> <span class='hidePost'>&ndash;</span> ";
+     echo "<a href='#' class='hidePost praywithusButton' onclick='return false;' id='$r->id'>Pray</a>";
      echo '</dd>';
      $i++;
   }
@@ -100,6 +104,29 @@ class PrayWithUs_Widget extends WP_Widget {
   </dl>
 </div>
 <?php
+  }
+
+  function pray_submit() {
+    global $praywithus_session;
+    if ( isset($_COOKIE["wp_praywithus_session"]) ) {
+      $praywithus_session = $_COOKIE["wp_praywithus_session"];
+    }    
+
+    // get the submitted parameters
+    $requestID = $_POST['requestID'];
+
+    // insert it
+    praywithus_add_prayer($requestID, $praywithus_session);
+
+    // generate the response
+    $response = json_encode( array( 'success' => true, 'count' => 999 ) );
+
+    // response output
+    header( "Content-Type: application/json" );
+    echo $response;
+
+    // IMPORTANT: don't forget to "exit"
+    exit;
   }
 }
 
