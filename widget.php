@@ -68,7 +68,7 @@ class PrayWithUs_Widget extends WP_Widget {
       $praywithus_session = $_COOKIE["wp_praywithus_session"];
     }
     if ( empty($praywithus_session) ) {
-      $praywithus_session = uniqid($_SERVER['REMOTE_ADDR'] . '_', true);
+      $praywithus_session = uniqid($_SERVER['REMOTE_ADDR'] . '-', true);
     }
     setcookie("wp_praywithus_session", $praywithus_session, time() + 631138519);  /* expire in 20 years */
   }
