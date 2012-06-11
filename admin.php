@@ -22,11 +22,11 @@
 */
 
 require_once dirname( __FILE__ ) . '/db.php';
-add_action( 'admin_menu', 'praywithus_menu' );
+add_action( 'admin_menu', 'load_praywithus_menu' );
 add_action( 'admin_enqueue_scripts', 'praywithus_load_js_and_css' );
 
-function praywithus_menu() {
-	add_options_page( 'Prayer Options', 'Pray With Us', 'manage_options', 'praywithus', 'praywithus_options' );
+function load_praywithus_menu() {
+  add_menu_page( 'Prayer Options', 'Pray With Us', 'edit_posts', 'praywithus_menu', 'praywithus_menu', plugin_dir_url( __FILE__ ) . 'praywithus.png', 37 );
 }
 
 function praywithus_load_js_and_css() {
@@ -34,11 +34,7 @@ function praywithus_load_js_and_css() {
   wp_enqueue_style( 'praywithus.css');
 }
 
-function praywithus_options() {
-  if ( !current_user_can( 'manage_options' ) )  {
-    wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
-  }
-
+function praywithus_menu() {
   // insert new post
   if ( isset($_POST['title']) && isset($_POST['description']) ) {
     praywithus_create_request($_POST['title'], $_POST['description']);
