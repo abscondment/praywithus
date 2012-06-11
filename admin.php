@@ -36,24 +36,28 @@ function praywithus_load_js_and_css() {
 
 function praywithus_menu() {
   // insert new post
-  if ( isset($_POST['title']) && isset($_POST['description']) ) {
+  if ( isset($_POST['title']) && !empty($_POST['title']) && isset($_POST['description']) && !empty($_POST['description']) ) {
     praywithus_create_request($_POST['title'], $_POST['description']);
-  }
-
-  if ( isset($_POST['toggleRequest']) && isset($_POST['toggleTo']) ) {
+  } else if ( isset($_POST['toggleRequest']) && !empty($_POST['toggleRequest']) && isset($_POST['toggleTo']) && !empty($_POST['toggleTo']) ) {
     if ( $_POST['toggleTo'] == 'activate' ) {
       praywithus_actvitate_request(intval($_POST['toggleRequest']));
     } else {
       praywithus_deactvitate_request(intval($_POST['toggleRequest']));
     }
+  } else if ( isset($_POST['deleteRequest']) && !empty($_POST['deleteRequest']) ) {
+    praywithus_delete_request(intval($_POST['deleteRequest']));
   }
-
+  
   // load current posts
   $requests = praywithus_get_requests();
 ?>    
 <div class="wrap">
   <h2>Manage Prayer Requests</h2>
-
+   <script type="text/javascript">
+     var PWUactuallyDelete = function(el) {
+       return confirm("Do you really want to delete this request?")
+    }
+  </script>
   <h3>Current requests</h3>
   <dl>
 <?php
@@ -96,8 +100,12 @@ function praywithus_menu() {
        echo "<input type='submit' value='Activate' />";
       
      }
-     echo ' | Delete</div>';
      echo '</form>';
+     echo ' | ';
+     echo "<form action='' method='POST' onsubmit='return PWUactuallyDelete(this);'><input type='hidden' name='deleteRequest' value='$r->id'  />";
+     echo "<input type='submit' value='Delete' />";
+     echo '</form>';
+     echo'</div>';
      echo '</dd>';
      $i++;
   }

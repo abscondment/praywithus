@@ -103,6 +103,7 @@ function praywithus_actvitate_request($requestId) {
 function praywithus_deactvitate_request($requestId) {
   praywithus_request_set_active_state($requestId, 0);
 }
+
 function praywithus_request_set_active_state($requestId, $activeState) {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
@@ -111,6 +112,18 @@ function praywithus_request_set_active_state($requestId, $activeState) {
                 array('id' => $requestId ),
                 array('%d'),
                 array('%d'));
+}
+
+function praywithus_delete_request($requestId) {
+  global $wpdb;
+  $request_table = $wpdb->prefix . "praywithus_requests";
+  $prayers_table = $wpdb->prefix . "praywithus_prayers";
+  $wpdb->query($wpdb->prepare("DELETE FROM $prayers_table
+                               WHERE request_id = %d",
+                              $requestId));
+  $wpdb->query($wpdb->prepare("DELETE FROM $request_table
+                               WHERE id = %d",
+                              $requestId));
 }
 
 function count_contents($count) {
