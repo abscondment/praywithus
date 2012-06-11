@@ -47,15 +47,19 @@ function praywithus_get_request($requestID) {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
   $prayers_table = $wpdb->prefix . "praywithus_prayers";
-  $request = $wpdb->get_row( "SELECT r.*, ifnull(p.count, 0) as count
-                              FROM $request_table r
-                                LEFT OUTER JOIN
-                                  (SELECT request_id, count(*) as count
-                                   FROM $prayers_table
-                                   WHERE request_id = $requestID) p
-                                ON r.id = p.request_id
-                              WHERE r.id = $requestID
-                              LIMIT 1" );
+  $request = $wpdb->get_row(
+               $wpdb->prepare("SELECT r.*, ifnull(p.count, 0) as count
+                               FROM $request_table r
+                                 LEFT OUTER JOIN
+                                   (SELECT request_id, count(*) as count
+                                    FROM $prayers_table
+                                    WHERE request_id = %d) p
+                                 ON r.id = p.request_id
+                               WHERE r.id = %d
+                               LIMIT 1",
+                              $requestID,
+                              $requestID
+             ));
   return $request;
 }
 
@@ -63,21 +67,24 @@ function praywithus_get_active_requests($sessionID) {
   global $wpdb;
   $request_table = $wpdb->prefix . "praywithus_requests";
   $prayers_table = $wpdb->prefix . "praywithus_prayers";
-  $requests = $wpdb->get_results( "SELECT r.*, ifnull(p.count, 0) as count, ifnull(s.count, 0) as praying
-                                   FROM $request_table r
-                                     LEFT OUTER JOIN
-                                     (SELECT request_id, count(*) as count
-                                      FROM $prayers_table
-                                      GROUP BY request_id) p
-                                     ON r.id = p.request_id
-                                     LEFT OUTER JOIN
-                                     (SELECT request_id, count(*) as count
-                                      FROM $prayers_table
-                                      WHERE session_id = '$sessionID'
-                                      GROUP BY request_id) s
-                                     ON r.id = s.request_id
-                                   WHERE r.active = 1
-                                   ORDER BY r.active DESC, r.id ASC" );
+  $requests = $wpdb->get_results(
+                $wpdb->prepare("SELECT r.*, ifnull(p.count, 0) as count, ifnull(s.count, 0) as praying
+                                FROM $request_table r
+                                  LEFT OUTER JOIN
+                                   (SELECT request_id, count(*) as count
+                                    FROM $prayers_table
+                                    GROUP BY request_id) p
+                                   ON r.id = p.request_id
+                                   LEFT OUTER JOIN
+                                   (SELECT request_id, count(*) as count
+                                    FROM $prayers_table
+                                    WHERE session_id = %s
+                                    GROUP BY request_id) s
+                                   ON r.id = s.request_id
+                                 WHERE r.active = 1
+                                 ORDER BY r.active DESC, r.id ASC",
+                $sessionID)
+              );
   return $requests;
 }
 
