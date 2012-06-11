@@ -40,6 +40,7 @@ class PrayWithUs_Widget extends WP_Widget {
     if ( is_active_widget( false, false, $this->id_base ) ) {
       add_action( 'wp', array( $this, 'cookies' ) );
       add_action( 'wp_head', array( $this, 'cssjs' ) );
+      add_action( 'wp_ajax_pray', array ( $this, 'pray_submit' ) );
       add_action( 'wp_ajax_nopriv_pray', array ( $this, 'pray_submit' ) );
     }
   }
