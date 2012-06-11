@@ -26,7 +26,7 @@ add_action( 'admin_menu', 'load_praywithus_menu' );
 add_action( 'admin_enqueue_scripts', 'praywithus_load_js_and_css' );
 
 function load_praywithus_menu() {
-  add_menu_page( 'Prayer Options', 'Pray With Us', 'edit_posts', 'praywithus_menu', 'praywithus_menu', plugin_dir_url( __FILE__ ) . 'praywithus.png', 37 );
+  add_menu_page( 'Manage Prayer Requests', 'Pray With Us', 'edit_posts', 'praywithus_menu', 'praywithus_menu', plugin_dir_url( __FILE__ ) . 'praywithus.png', 37 );
 }
 
 function praywithus_load_js_and_css() {
@@ -53,22 +53,6 @@ function praywithus_menu() {
 ?>    
 <div class="wrap">
   <h2>Manage Prayer Requests</h2>
-
-  <div id="addForm" style="display:none;">>
-  <a href="#" onclick="return false;"><h3>Add a request</h3></a>
-  </div>
-    <h3>Add a request</h3>
-    <form action="" method="POST">
-      <dl>
-        <dt><label for="request_title">Title: </label></dt>
-        <dd><input id="request_title" name="title" style="min-width:150px;" /></dd>
-        <dt><label for="request_description">Description: </label></dt>
-        <dd><textarea id="request_description" name="description" style="min-height:100px;min-width:300px;"></textarea></dd>
-      <dt></dt>
-      <dd><input type="submit" value="Add Request" /></dd>
-      </dl>
-    </form>
-    <hr />
 
   <h3>Current requests</h3>
   <dl>
@@ -119,6 +103,22 @@ function praywithus_menu() {
   }
 ?>
   </dl>
+
+  <hr />
+  <div id="addForm" style="display:none;">>
+  <a href="#" onclick="return false;"><h3>Add a request</h3></a>
+  </div>
+  <h3>Add a request</h3>
+  <form action="" method="POST">
+    <dl>
+      <dt><label for="request_title">Title: </label></dt>
+      <dd><input id="request_title" name="title" style="min-width:150px;" /></dd>
+      <dt><label for="request_description">Description: </label></dt>
+      <dd><textarea id="request_description" name="description" style="min-height:100px;min-width:300px;"></textarea></dd>
+    <dt></dt>
+    <dd><input type="submit" value="Add Request" /></dd>
+    </dl>
+  </form>
 </div>
 <?php
 }
