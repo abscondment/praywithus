@@ -24,11 +24,30 @@
 
 function praywithus_create_request($title, $description) {
   global $wpdb;
+
+  // NB: Using stripslashes_deep because... ugh, don't get me started.
+  //
+  // I tried. I really tried. But this is an obvious outgrowth of the
+  // PHP fractal of bad design [1].
+  //
+  //  * There's PHP magic quotes, which automagically escapes incoming data.
+  //  * On top of that, $wpdb insert, prepare, and other sensible
+  //    default database methods that perform escaping.
+  //  * On top of that, WordPress 3.0+ does its own magic-quoting. [2]
+  //
+  //  Gack. What a morass of gack. Give me any other language, please.
+  // 
+  // 1: http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/
+  // 2: http://stackoverflow.com/questions/7341942/wpdb-update-or-wpdb-insert-results-in-slashes-being-added-in-front-of-quotes
+  
   $request_table = $wpdb->prefix . "praywithus_requests";
-  $rows_affected = $wpdb->insert($request_table,
-                                 array('created_at' => current_time('mysql'),
-                                       'title' => $title,
-                                       'description' => $description));
+  $rows_affected = $wpdb->query(
+                     $wpdb->prepare("INSERT INTO $request_table
+                                      (title, description, created_at)
+                                      VALUES
+                                      (%s, %s, NOW())",
+                                    array( stripslashes_deep($title),
+                                           stripslashes_deep($description) )));
   return $rows_affected;
 }
 
