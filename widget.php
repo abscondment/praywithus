@@ -116,9 +116,7 @@ class PrayWithUs_Widget extends WP_Widget {
 
   function pray_submit() {
     global $praywithus_session;
-    if ( isset($_COOKIE["wp_praywithus_session"]) ) {
-      $praywithus_session = $_COOKIE["wp_praywithus_session"];
-    }    
+    $this->cookies();
 
     // get the submitted parameters
     $requestID = intval($_POST['requestID']);
