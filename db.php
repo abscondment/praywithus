@@ -55,9 +55,12 @@ function praywithus_create_request($title, $description) {
 function praywithus_add_prayer($requestID, $sessionID) {
   global $wpdb;
   $prayers_table = $wpdb->prefix . "praywithus_prayers";
-  $rows_affected = $wpdb->insert($prayers_table,
-                                 array( 'request_id' => $requestID, 'session_id' => $sessionID ),
-                                 array( '%d', '%s' ));
+  $rows_affected = $wpdb->query(
+                     $wpdb->prepare("INSERT INTO $prayers_table
+                                      (request_id, session_id)
+                                      VALUES
+                                      (%d, %s)",
+                                    array( $requestID, stripslashes_deep($sessionID) )));
   return $rows_affected;
 }
 
@@ -102,7 +105,7 @@ function praywithus_get_active_requests($sessionID) {
                                    ON r.id = s.request_id
                                  WHERE r.active = 1
                                  ORDER BY r.active DESC, r.id ASC",
-                $sessionID)
+                               array( stripslashes_deep($sessionID) ))
               );
   return $requests;
 }
