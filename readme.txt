@@ -10,9 +10,6 @@ License URI: http://www.opensource.org/licenses/mit-license.php
 
 The Pray With Us plugin adds a simple prayer request widget to WordPress.
 
-Administrators can manage a list of prayer requests. Visitors can mark
-the ones for which they are praying and see the prayer counts.
-
 == Description ==
 
 The Pray With Us plugin adds a simple prayer request widget to WordPress.
@@ -35,6 +32,10 @@ the ones for which they are praying and see the prayer counts.
 the directory of the stable readme.txt, so in this case, `/tags/4.3/screenshot-1.png` (or jpg, jpeg, gif)
 2. This is the second screen shot
 
+== Frequently Asked Questions ==
+
+= TODO =
+
 == Changelog ==
 
 = 0.0.2 =
@@ -42,3 +43,5 @@ the directory of the stable readme.txt, so in this case, `/tags/4.3/screenshot-1
 * Initial Release
 
 == Upgrade Notice ==
+
+= 0.0.2 =
